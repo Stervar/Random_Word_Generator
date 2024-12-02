@@ -115,4 +115,110 @@ class RandomGenerator(QWidget):
         layout.addWidget(self.generation_type, 2, 1)
 
         # Длина слова / количество
-        layout.addWidget(QLabel("Длина слова/
+        layout.addWidget(QLabel("Длина слова/Количество:"), 3, 0)
+        self.count_input = QSpinBox()
+        self.count_input.setRange(1, 100)
+        self.count_input.setValue(1)
+        layout.addWidget(self.count_input, 3, 1)
+
+        # Кнопка генерации
+        self.generate_button = QPushButton("Сгенерировать")
+        self.generate_button.clicked.connect(self.generate_words)
+        layout.addWidget(self.generate_button, 4, 0, 1, 5)
+
+        self.setLayout(layout)
+        self.apply_theme()
+
+    def generate_words(self):
+        """
+        Генерация случайных слов, словосочетаний или имен.
+        """
+        try:
+            count = self.count_input.value()
+            generation_type = self.generation_type.currentText()
+
+            if generation_type == 'Случайные слова':
+                words = [self.word_generator.generate_random_phrase(count) for _ in range(5)]
+                result_text = f"Сгенерированы случайные слова:\n{words}"
+
+            elif generation_type == 'Словосочетания':
+                phrases = self.word_generator.generate_random_phrase(count)
+                result_text = f"Сгенерированы словосочетания ({count} шт.):\n{phrases}"
+
+            elif generation_type == 'Случайные имена':
+                names = self.word_generator.generate_random_names(count)
+                result_text = f"Сгенерированы случайные имена ({count} шт.):\n{names}"
+
+            self.result.setText(result_text)
+            self.history.append(result_text)
+        except Exception as e:
+            self.result.setText(f"Ошибка: {str(e)}")
+
+    def apply_theme(self):
+        """
+        Применение темы.
+        """
+        if self.is_dark_theme:
+            self.setStyleSheet("background-color: #2E2E2E; color: white;")
+            self.theme_button.setStyleSheet("background-color: #4C4C4C; color: white;")
+            self.help_button.setStyleSheet("background-color: #4C4C4C; color: white;")
+            self.export_button.setStyleSheet("background-color: #4C4C4C; color: white;")
+            self.result.setStyleSheet("background-color: #1E1E1E; color: white;")
+        else:
+            self.setStyleSheet("background-color: #FFFFFF; color: black;")
+            self.theme_button.setStyleSheet("background-color: #CCCCCC; color: black;")
+            self.help_button.setStyleSheet("background-color: #CCCCCC; color: black;")
+            self.export_button.setStyleSheet("background-color: #CCCCCC; color: black;")
+            self.result.setStyleSheet("background-color: #F0F0F0; color: black;")
+
+    def toggle_theme(self):
+        """
+        Переключение темы.
+        """
+        self.is_dark_theme = not self.is_dark_theme
+        self.apply_theme()
+
+    def show_help(self):
+        """
+        Показ справки.
+        """
+        QMessageBox.information(self, "Справка", 
+            "Генератор случайных слов:\n"
+            "1. Выберите тип генерации.\n"
+            "2. Укажите длину слова или количество слов.\n"
+            "3. Нажмите 'Сгенерировать' для получения результата.")
+
+    def export_history(self):
+        """
+        Экспортировать историю генерации в текстовый файл.
+        """
+        with open("history.txt", "w") as file:
+            for entry in self.history:
+                file.write(entry + "\n")
+        QMessageBox.information(self, "Экспорт", "История генерации экспортирована в history.txt")
+
+class SplashScreen(QWidget):
+    """
+    Класс для отображения заставки при запуске приложения.
+    """
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Загрузка")
+        self.setGeometry(100, 100, 600, 600)
+        self.setStyleSheet("background-color: #2E2E2E;")
+
+        layout = QVBoxLayout()
+        layout.setAlignment(Qt.AlignCenter)
+
+        # Логотип
+        self.logo = QLabel()
+        self.logo.setPixmap(QPixmap("logo.png").scaled(200, 200, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        self.logo.setAlignment(Qt.AlignCenter)
+        self.logo.setStyleSheet("opacity: 0;")
+        layout.addWidget(self.logo)
+
+        # Заголовок
+        self.title = QLabel("")
+        self.title.setAlignment(Qt.AlignCenter)
+        self.title.setStyleSheet("color: white; font-size: 50px; opacity: 0;")
+        layout.add
