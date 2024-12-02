@@ -2,7 +2,7 @@ import sys
 import random
 import pymorphy2
 from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout, QPushButton, 
-                             QGridLayout, QLineEdit, QLabel, QProgressBar, 
+                            QGridLayout, QLineEdit, QLabel, QProgressBar, 
                              QTextEdit, QMessageBox, QComboBox, QSpinBox)
 
 class ExtendedRandomWordGenerator:
