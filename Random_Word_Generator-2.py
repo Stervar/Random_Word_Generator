@@ -256,7 +256,7 @@ class SplashScreen(QWidget):
         self.logo_animation.start()
 
         # Инициализация анимации заголовка
-        self.title_text = "RANDOM WORD GENERATOR"
+        self.title_text = "RANDOM WORD"
         self.title_index = 0
         self.title_timer = QTimer()
         self.title_timer.timeout.connect(self.update_title)
