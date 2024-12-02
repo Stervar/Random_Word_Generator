@@ -221,4 +221,98 @@ class SplashScreen(QWidget):
         self.title = QLabel("")
         self.title.setAlignment(Qt.AlignCenter)
         self.title.setStyleSheet("color: white; font-size: 50px; opacity: 0;")
-        layout.add
+        layout.addWidget(self.title)
+
+        # Индикатор загрузки
+        self.progress = QProgressBar()
+        self.progress.setRange(0, 100)
+        self.progress.setValue(0)
+        layout.addWidget(self.progress)
+
+        # Кнопка с текстом
+        self.footer_button = QPushButton('Создано Габеркорн Вадимом')
+        self.footer_button.setStyleSheet("""
+            QPushButton {
+                background-color: #FFD700;  
+                color: black; 
+                font-size: 18px; 
+                font-weight: bold; 
+                border: 2px solid #FFA500;  
+                border-radius: 10px; 
+                padding: 10px 20px;  
+                max-width: 350px;   
+            }
+            QPushButton:hover {
+                background-color: #FFA500;  
+                border: 2px solid #FF8C00;  
+            }
+        """)
+        self.footer_button.setFixedWidth(350)
+        self.footer_button.setCursor(Qt.PointingHandCursor)
+
+        layout.addStretch()
+        layout.addWidget(self.footer_button, alignment=Qt.AlignCenter)
+        layout.addStretch()
+
+        self.setLayout(layout)
+
+        # Анимация для логотипа
+        self.logo_animation = QPropertyAnimation(self.logo, b"opacity")
+        self.logo_animation.setDuration(2000)
+        self.logo_animation.setStartValue(0)
+        self.logo_animation.setEndValue(1)
+
+        # Таймер для обновления индикатора загрузки
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_progress)
+        self.timer.start(100)
+
+        self.show()
+        self.logo_animation.start()
+
+        # Инициализация анимации заголовка
+        self.title_text = "RANDOM WORD GENERATOR"
+        self.title_index = 0
+        self.title_timer = QTimer()
+        self.title_timer.timeout.connect(self.update_title)
+        self.title_timer.start(200)
+
+    def update_title(self):
+        """
+        Обновление заголовка заставки.
+        """
+        if self.title_index < len(self.title_text):
+            self.title.setText(self.title.text() + self.title_text[self.title_index])
+            self.title_index += 1
+        else:
+            self.title_timer.stop()
+
+        if self.title_index == len(self.title_text):
+            self.title_animation = QPropertyAnimation(self.title, b"opacity")
+            self.title_animation.setDuration(8000)
+            self.title_animation.setStartValue(0)
+            self.title_animation.setEndValue(1)
+            self.title_animation.start()
+
+    def update_progress(self):
+        """
+        Обновление индикатора загрузки.
+        """
+        value = self.progress.value() + 4
+        if value > 100:
+            self.timer.stop()
+            self.close()
+            self.open_generator()
+        self.progress.setValue(value)
+
+    def open_generator(self):
+        """
+        Открытие основного окна генератора случайных слов.
+        """
+        self.generator = RandomGenerator()
+        self.generator.show()
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    splash = SplashScreen()
+    sys.exit(app.exec_())
